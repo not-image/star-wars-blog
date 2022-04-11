@@ -1,3 +1,5 @@
+import { CompressOutlined } from "@mui/icons-material";
+
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
@@ -7,24 +9,27 @@ const getState = ({ getStore, getActions, setStore }) => {
       planets: JSON.parse(localStorage.getItem("planets")) || [],
       vehicles: JSON.parse(localStorage.getItem("vehicles")) || [],
       favorites: JSON.parse(localStorage.getItem("favorites")) || [],
+      isLoading: false,
     },
     actions: {
       getApiData: async () => {
         let store = getStore();
         if (!store.people.length) {
+          setStore({
+            ...store,
+            isLoading: true,
+          });
           for (let endPoint of store.endPoints) {
             try {
               let response = await fetch(`${store.BASE_URL}/${endPoint}`);
               if (response.ok) {
                 let data = await response.json();
-                console.log(data);
                 data.results.map(async (each) => {
                   let answer = await fetch(
                     `${store.BASE_URL}/${endPoint}/${each.uid}`
                   );
                   if (answer.ok) {
                     let itemData = await answer.json();
-                    console.log(itemData);
                     setStore({
                       ...store,
                       [endPoint]: [...store[endPoint], itemData.result],
@@ -33,6 +38,15 @@ const getState = ({ getStore, getActions, setStore }) => {
                       endPoint,
                       JSON.stringify(store[endPoint])
                     );
+                    if (
+                      endPoint === "vehicles" &&
+                      itemData.result.uid === "24"
+                    ) {
+                      setStore({
+                        ...store,
+                        isLoading: false,
+                      });
+                    }
                   }
                 });
               }
@@ -73,7 +87,6 @@ const getState = ({ getStore, getActions, setStore }) => {
             localStorage.setItem("favorites", JSON.stringify(store.favorites));
           }
         } else {
-          console.log("favorites array is empty");
           setStore({
             ...store,
             favorites: [
@@ -88,8 +101,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           });
           localStorage.setItem("favorites", JSON.stringify(store.favorites));
         }
-
-        console.log(store.favorites);
       },
       deleteFromList: (id) => {
         let store = getStore();

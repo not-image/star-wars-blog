@@ -7,7 +7,6 @@ import injectContext from "./context/appContext";
 import Details from "./views/Details.jsx";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import "../styles/index.css";
 import { Container } from "@mui/material";
 
 const theme = createTheme({

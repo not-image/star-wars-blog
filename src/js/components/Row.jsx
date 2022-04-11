@@ -28,7 +28,9 @@ const Row = ({ list, type }) => {
         flexWrap="nowrap"
       >
         {list.map((each) => {
-          return <ItemCard key={each.properties.name} item={each} type={type} />;
+          return (
+            <ItemCard key={each.properties.name} item={each} type={type} />
+          );
         })}
       </Stack>
     </Stack>

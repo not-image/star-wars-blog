@@ -9,8 +9,14 @@ import PropTypes from "prop-types";
 
 const ItemCard = ({ item, type }) => {
   let context = useContext(Context);
-
   let params = useParams();
+
+  let imageSource = "";
+  if (item.uid === "1" && type === "planets") {
+    imageSource = `https://upload.wikimedia.org/wikipedia/en/6/6d/Tatooine_%28fictional_desert_planet%29.jpg`;
+  } else {
+    imageSource = `https://starwars-visualguide.com/assets/img/${type}/${item.uid}.jpg`;
+  }
 
   return (
     <Card
@@ -26,7 +32,7 @@ const ItemCard = ({ item, type }) => {
         <CardMedia
           component="img"
           height="200"
-          image={`https://starwars-visualguide.com/assets/img/${type}/${item.uid}.jpg`}
+          image={imageSource}
           sx={{ filter: "brightness(70%)" }}
         />
       </Link>

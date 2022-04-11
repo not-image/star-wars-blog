@@ -1,7 +1,7 @@
 body {
   background-color: rgb(243, 243, 243);
-  background-image: radial-gradient(rgb(227, 227, 227) 6%, transparent 5%),
-    radial-gradient(rgb(233, 233, 233) 1%, transparent 3%);
+  background-image: radial-gradient(rgba(227, 227, 227, 0.572) 6%, transparent 5%),
+    radial-gradient(rgb(192, 192, 192) 1%, transparent 3%);
   background-size: 25px 25px;
   background-position: 0 0, 33px 30px;
   background-repeat: repeat;
@@ -12,15 +12,15 @@ a {
 }
 
 .min-height-150 {
-  min-height: 150px
+  min-height: 150px;
 }
 
 .min-height-70 {
-  min-height: 60px
+  min-height: 60px;
 }
 
 .sm-width {
-  min-width: 265px;
+  min-width: 268px;
 }
 
 .md-width {

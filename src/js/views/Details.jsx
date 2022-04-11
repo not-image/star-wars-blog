@@ -25,6 +25,13 @@ const Details = () => {
     });
   }
 
+  let imageSource = "";
+  if (myItem.uid === "1" && params.type === "planets") {
+    imageSource = `https://upload.wikimedia.org/wikipedia/en/6/6d/Tatooine_%28fictional_desert_planet%29.jpg`;
+  } else {
+    imageSource = `https://starwars-visualguide.com/assets/img/${params.type}/${myItem.uid}.jpg`;
+  }
+
   return (
     <div className="details-page">
       <Breadcrumbs aria-label="breadcrumb" margin="20px 0" fontWeight="700">
@@ -41,7 +48,7 @@ const Details = () => {
           <CardMedia
             component="img"
             height="430px"
-            image={`https://starwars-visualguide.com/assets/img/${params.type}/${params.id}.jpg`}
+            image={imageSource}
             sx={{ filter: "brightness(100%)" }}
           />
         </Stack>
@@ -130,7 +137,11 @@ const Details = () => {
           )}
         </Stack>
       </Stack>
-      <RelatedItems store={context.store} currentType={params.type} />
+      <RelatedItems
+        store={context.store}
+        currentItem={myItem}
+        currentType={params.type}
+      />
     </div>
   );
 };
