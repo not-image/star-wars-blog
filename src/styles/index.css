@@ -1,3 +1,84 @@
-/* 
-    General Styles
-*/
+body {
+  background-color: rgb(243, 243, 243);
+  background-image: radial-gradient(rgb(227, 227, 227) 6%, transparent 5%),
+    radial-gradient(rgb(233, 233, 233) 1%, transparent 3%);
+  background-size: 25px 25px;
+  background-position: 0 0, 33px 30px;
+  background-repeat: repeat;
+}
+
+a {
+  text-decoration: none;
+}
+
+.min-height-150 {
+  min-height: 150px
+}
+
+.min-height-70 {
+  min-height: 60px
+}
+
+.sm-width {
+  min-width: 265px;
+}
+
+.md-width {
+  min-width: 290px;
+}
+
+.home {
+  padding-bottom: 80px;
+}
+
+.hover-text {
+  position: relative;
+}
+
+.hover-text:hover::after {
+  position: absolute;
+  content: "";
+  height: 1px;
+  width: 100%;
+  bottom: 2px;
+  left: 0;
+  background: gray;
+}
+
+.item-card:hover {
+  border: 1px solid gray;
+}
+
+.details-page {
+  background: transparent;
+}
+
+.search-list {
+  position: absolute;
+  top: 57px;
+  background-color: white;
+  padding: 10px;
+  width: 100%;
+  z-index: 999;
+}
+
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
+  box-shadow: none !important;
+  border: 2px solid #eee;
+  border-top: none;
+  border-radius: 0 0 5px 5px !important;
+  min-width: 270px !important;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list {
+  padding: 20px !important;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list li {
+  cursor: default;
+}
+
+.css-37w2tp-MuiTypography-root-MuiLink-root:hover {
+  color: black !important;
+  cursor: default;
+}
