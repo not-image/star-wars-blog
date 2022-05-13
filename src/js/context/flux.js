@@ -3,11 +3,11 @@ import { CompressOutlined } from "@mui/icons-material";
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      BASE_URL: "https://www.swapi.tech/api",
-      endPoints: ["people", "planets", "vehicles"],
+      // BASE_URL: "https://www.swapi.tech/api",
+      BASE_URL: "127.0.0.1:3000",
+      endPoints: ["characters", "planets"],
       people: JSON.parse(localStorage.getItem("people")) || [],
       planets: JSON.parse(localStorage.getItem("planets")) || [],
-      vehicles: JSON.parse(localStorage.getItem("vehicles")) || [],
       favorites: JSON.parse(localStorage.getItem("favorites")) || [],
       isLoading: false,
     },
@@ -26,7 +26,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 let data = await response.json();
                 data.results.map(async (each) => {
                   let answer = await fetch(
-                    `${store.BASE_URL}/${endPoint}/${each.uid}`
+                    `${store.BASE_URL}/${endPoint}/${each.item_id}`
                   );
                   if (answer.ok) {
                     let itemData = await answer.json();
@@ -39,8 +39,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                       JSON.stringify(store[endPoint])
                     );
                     if (
-                      endPoint === "vehicles" &&
-                      itemData.result.uid === "24"
+                      endPoint === "planets" &&
+                      itemData.result.item_id === "10"
                     ) {
                       setStore({
                         ...store,
