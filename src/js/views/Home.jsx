@@ -7,16 +7,12 @@ export const Home = () => {
   const { store } = useContext(Context);
   const categories = [
     {
-      list: store.people,
+      list: store.characters,
       type: "characters",
     },
     {
       list: store.planets,
       type: "planets",
-    },
-    {
-      list: store.vehicles,
-      type: "vehicles",
     },
   ];
 
