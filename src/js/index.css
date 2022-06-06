@@ -64,14 +64,14 @@ a {
 
 .css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
   box-shadow: none !important;
-  border: 2px solid #eee;
+  border: 2px solid rgb(230, 230, 230);
   border-top: none;
   border-radius: 0 0 5px 5px !important;
   min-width: 270px !important;
 }
 
 .css-6hp17o-MuiList-root-MuiMenu-list {
-  padding: 20px !important;
+  padding: 12px !important;
 }
 
 .css-6hp17o-MuiList-root-MuiMenu-list li {

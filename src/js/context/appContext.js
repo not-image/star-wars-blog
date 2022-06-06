@@ -18,7 +18,7 @@ const injectContext = PassedComponent => {
 		);
 
 		useEffect(() => {
-			state.actions.getApiData();
+			state.actions.fetchData();
 		}, []);
 
 		return (
