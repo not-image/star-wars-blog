@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import React, { useContext } from "react";
 import Row from "../components/Row.jsx";
 import { Context } from "../context/appContext";
@@ -18,7 +18,7 @@ export const Home = () => {
 
   return (
     <>
-      {store.isLoading ? (
+      {store.loadingScreen ? (
         <Box>
           <CircularProgress
             sx={{

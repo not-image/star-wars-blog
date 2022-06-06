@@ -8,11 +8,13 @@ import Details from "./views/Details.jsx";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Container } from "@mui/material";
+import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
+import Profile from "./views/Profile.jsx";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#48BB78",
+      main: "#0D6EFD",
     },
   },
 });
@@ -30,6 +32,9 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/:type/:id" element={<Details />} />
+                  <Route element={<ProtectedRoutes />}>
+                    <Route path="/profile" element={<Profile />} />
+                  </Route>
                   <Route path="*" element={<h1>Not found!</h1>} />
                 </Routes>
               </Container>

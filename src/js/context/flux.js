@@ -2,34 +2,42 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       //BASE_URL: "https://www.swapi.tech/api",
-      BASE_URL: "127.0.0.1:8000",
-      token:
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MjQ2NDU3MCwianRpIjoiMWYwMjIzN2EtMDcyYi00YjY2LTkwOGYtYTE4MDJkMWE5NzhlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjUyNDY0NTcwLCJleHAiOjE2NTI0NjU0NzB9.YwqolmSPZ1C-K8Dp96M4w7N69FnTzu-GVRqSnwNQAcU",
-      endPoints: ["people", "planets"],
+      BASE_URL: "http://127.0.0.1:8000",
+      endPoints: ["characters", "planets"],
       characters: JSON.parse(localStorage.getItem("characters")) || [],
       planets: JSON.parse(localStorage.getItem("planets")) || [],
       favorites: JSON.parse(localStorage.getItem("favorites")) || [],
-      isLoading: false,
+      user: {
+        username: JSON.parse(localStorage.getItem("userName")) || "",
+        token: JSON.parse(localStorage.getItem("userToken")) || "",
+        planet: JSON.parse(localStorage.getItem("userPlanet")) || "",
+      },
+      loadingScreen: false,
+      loginModal: false,
+      signupStatus: "",
+      loginSatus: "",
+      currentTab: "login",
     },
     actions: {
       fetchData: async () => {
         let store = getStore();
+        let actions = getActions();
         if (!store.characters.length) {
           setStore({
             ...store,
-            isLoading: true,
+            loadingScreen: true,
           });
           for (let endPoint of store.endPoints) {
             try {
               let response = await fetch(`${store.BASE_URL}/${endPoint}`, {
+                method: "GET",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${store.token}`,
+                  Authorization: `Bearer ${store.user.token}`,
                 },
               });
 
               if (response.ok) {
-                console.log("response ok")
                 let data = await response.json();
                 data.results.map(async (each) => {
                   setStore({
@@ -40,14 +48,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     endPoint,
                     JSON.stringify(store[endPoint])
                   );
-                  if (
-                    endPoint === "planets" &&
-                    itemData.results.uid === "10"
-                  ) {
-                    setStore({
-                      ...store,
-                      isLoading: false,
-                    });
+                  if (each.id === 20) {
+                    actions.setLoadingScreen(false);
                   }
                 });
               }
@@ -56,6 +58,14 @@ const getState = ({ getStore, getActions, setStore }) => {
             }
           }
         }
+      },
+      setLoadingScreen: (status) => {
+        let store = getStore();
+
+        setStore({
+          ...store,
+          loadingScreen: status,
+        });
       },
       // getApiData: async () => {
       //   let store = getStore();
@@ -102,19 +112,50 @@ const getState = ({ getStore, getActions, setStore }) => {
       //   } else {
       //   }
       // },
-      toggleFavorites: (item, type) => {
+      toggleFavorites: async (item, type) => {
         let store = getStore();
-        if (store.favorites.length) {
-          let exists = store.favorites.find((eachObj) => {
-            return eachObj.id === item._id;
-          });
-          if (!exists) {
+
+        if (store.user.token === "") {
+          if (store.favorites.length) {
+            let exists = store.favorites.find((eachObj) => {
+              return eachObj.id === item.id;
+            });
+            if (!exists) {
+              setStore({
+                ...store,
+                favorites: [
+                  ...store.favorites,
+                  {
+                    id: item.id,
+                    uid: item.uid,
+                    name: item.name,
+                    type: type,
+                  },
+                ],
+              });
+              localStorage.setItem(
+                "favorites",
+                JSON.stringify(store.favorites)
+              );
+            } else {
+              setStore({
+                ...store,
+                favorites: store.favorites.filter((eachObj) => {
+                  return eachObj.id != item.id;
+                }),
+              });
+              localStorage.setItem(
+                "favorites",
+                JSON.stringify(store.favorites)
+              );
+            }
+          } else {
             setStore({
               ...store,
               favorites: [
                 ...store.favorites,
                 {
-                  id: item.item_id,
+                  id: item.id,
                   uid: item.uid,
                   name: item.name,
                   type: type,
@@ -122,40 +163,313 @@ const getState = ({ getStore, getActions, setStore }) => {
               ],
             });
             localStorage.setItem("favorites", JSON.stringify(store.favorites));
+          }
+        } else {
+          // if user is logged in
+          if (store.favorites.length) {
+            let exists = store.favorites.find((eachObj) => {
+              return eachObj.id === item.id;
+            });
+            if (!exists) {
+              let response = await fetch(`${store.BASE_URL}/favorites`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${store.user.token}`,
+                },
+                body: JSON.stringify({
+                  item_id: item.id,
+                }),
+              });
+              if (response.ok) {
+                setStore({
+                  ...store,
+                  favorites: [
+                    ...store.favorites,
+                    {
+                      id: item.id,
+                      uid: item.uid,
+                      name: item.name,
+                      type: type,
+                    },
+                  ],
+                });
+                localStorage.setItem(
+                  "favorites",
+                  JSON.stringify(store.favorites)
+                );
+              } else {
+                console.log("err");
+              }
+            } else {
+              let response2 = await fetch(`${store.BASE_URL}/favorites`, {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${store.user.token}`,
+                },
+                body: JSON.stringify({
+                  item_id: item.id,
+                }),
+              });
+              if (response2.status === 204) {
+                setStore({
+                  ...store,
+                  favorites: store.favorites.filter((eachObj) => {
+                    return eachObj.id != item.id;
+                  }),
+                });
+                localStorage.setItem(
+                  "favorites",
+                  JSON.stringify(store.favorites)
+                );
+              }
+            }
           } else {
+            let response3 = await fetch(`${store.BASE_URL}/favorites`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${store.user.token}`,
+              },
+              body: JSON.stringify({
+                item_id: item.id,
+              }),
+            });
+            if (response3.ok) {
+              setStore({
+                ...store,
+                favorites: [
+                  ...store.favorites,
+                  {
+                    id: item.id,
+                    uid: item.uid,
+                    name: item.name,
+                    type: type,
+                  },
+                ],
+              });
+              localStorage.setItem(
+                "favorites",
+                JSON.stringify(store.favorites)
+              );
+            }
+          }
+        }
+      },
+      deleteFromList: async (id) => {
+        let store = getStore();
+
+        if (store.user.token === "") {
+          setStore({
+            ...store,
+            favorites: store.favorites.filter((eachObj) => {
+              return eachObj.id != id;
+            }),
+          });
+          localStorage.setItem("favorites", JSON.stringify(store.favorites));
+        } else {
+          let response = await fetch(`${store.BASE_URL}/favorites`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${store.user.token}`,
+            },
+            body: JSON.stringify({
+              item_id: id,
+            }),
+          });
+          if (response.status === 204) {
             setStore({
               ...store,
               favorites: store.favorites.filter((eachObj) => {
-                return eachObj.id != item._id;
+                return eachObj.id != id;
               }),
             });
             localStorage.setItem("favorites", JSON.stringify(store.favorites));
+          } else {
+            console.log(response.status, "error");
           }
+        }
+      },
+      login: async (email, password) => {
+        let store = getStore();
+
+        let response = await fetch(`${store.BASE_URL}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        });
+        if (response.status === 200) {
+          let data = await response.json();
+          setStore({
+            ...store,
+            loginStatus: "Signing you in...",
+            user: {
+              ...store.user,
+              username: data.response["username"],
+              token: data.response["token"],
+              planet: data.response["planet"],
+            },
+          });
+          localStorage.setItem(
+            "userName",
+            JSON.stringify(data.response["username"])
+          );
+          localStorage.setItem(
+            "userToken",
+            JSON.stringify(data.response["token"])
+          );
+          localStorage.setItem(
+            "userPlanet",
+            JSON.stringify(data.response["planet"])
+          );
+          let response2 = await fetch(`${store.BASE_URL}/favorites`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${store.user.token}`,
+            },
+          });
+          if (response2.ok) {
+            let data2 = await response2.json();
+
+            for (let favorite of store.favorites) {
+              let reply = await fetch(`${store.BASE_URL}/favorites`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${store.user.token}`,
+                },
+                body: JSON.stringify({
+                  item_id: favorite.id,
+                }),
+              });
+              if (!reply.ok) {
+                console.log("err");
+              }
+            }
+            let dataArr = data2.results.map((eachObj) => {
+              return {
+                id: eachObj.id,
+                uid: eachObj.uid,
+                name: eachObj.name,
+                type: eachObj.type,
+              };
+            });
+            let joinedFavorites = [
+              ...store.favorites.filter((eachObj) => {
+                return !dataArr.find((obj) => eachObj.id === obj.id);
+              }),
+              ...dataArr,
+            ];
+            setStore({
+              ...store,
+              favorites: joinedFavorites,
+            });
+            localStorage.setItem("favorites", JSON.stringify(joinedFavorites));
+          }
+
+          // let response3 = await fetch(`${store.BASE_URL}/favorites`, {
+          //   method: "GET",
+          //   headers: {
+          //     Authorization: `Bearer ${store.user.token}`,
+          //   },
+          // });
+          // if (response3.ok) {
+          //   let data3 = await response2.json();
+
+          //   let retreivedFavorites = data3.results.map((eachObj) => {
+          //     return {
+          //       id: eachObj.id,
+          //       uid: eachObj.uid,
+          //       name: eachObj.name,
+          //       type: eachObj.type,
+          //     };
+          //   });
+          //   setStore({
+          //     ...store,
+          //     favorites: retreivedFavorites,
+          //   });
+          //   localStorage.setItem(
+          //     "favorites",
+          //     JSON.stringify(retreivedFavorites)
+          //   );
+          // }
         } else {
           setStore({
             ...store,
-            favorites: [
-              ...store.favorites,
-              {
-                id: item._id,
-                uid: item.uid,
-                name: item.properties.name,
-                type: type,
-              },
-            ],
+            loginStatus: `We encountered an error ${response.status}.`,
           });
-          localStorage.setItem("favorites", JSON.stringify(store.favorites));
         }
       },
-      deleteFromList: (id) => {
+      signup: async (username, email, password, planet) => {
         let store = getStore();
-        setStore({
-          ...store,
-          favorites: store.favorites.filter((eachObj) => {
-            return eachObj.id != id;
+        let actions = getActions();
+
+        let response = await fetch(`${store.BASE_URL}/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: username,
+            email: email,
+            password: password,
+            planet: planet,
           }),
         });
-        localStorage.setItem("favorites", JSON.stringify(store.favorites));
+        if (response.status === 201) {
+          setStore({
+            ...store,
+            signupStatus: "Account created. Signing you in...",
+          });
+          actions.login(email, password);
+        } else {
+          setStore({
+            ...store,
+            signupStatus: `We encountered an error ${response.status}.`,
+          });
+        }
+      },
+      logout: () => {
+        let store = getStore();
+
+        setStore({
+          ...store,
+          favorites: [],
+          user: {
+            username: "",
+            token: "",
+            planet: "",
+          },
+          loginStatus: "",
+          signupStatus: "",
+        });
+        localStorage.removeItem("favorites");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("userPlanet");
+      },
+      setLoginModal: (status) => {
+        let store = getStore();
+
+        setStore({
+          ...store,
+          loginModal: status,
+        });
+      },
+      setCurrentTab: (mode) => {
+        let store = getStore();
+
+        setStore({
+          ...store,
+          currentTab: mode,
+        });
       },
     },
   };

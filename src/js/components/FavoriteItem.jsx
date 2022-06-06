@@ -5,7 +5,7 @@ import { Context } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-const ListItem = ({ eachObj, onLinkClick }) => {
+const FavoriteItem = ({ eachObj, index }) => {
   let context = useContext(Context);
   let navigate = useNavigate();
 
@@ -18,47 +18,34 @@ const ListItem = ({ eachObj, onLinkClick }) => {
   };
 
   return (
-    <Stack
-      flexDirection="row"
-      justifyContent="space-between"
-      width="100%"
-      alignItems="center"
-    >
+    <Stack flexDirection="row" width="100%" alignItems="center" sx={{paddingBottom: "5px"}}>
       <Stack flexDirection="column">
         <Stack>
           <Typography
-            onClick={() => {
-              handleClick();
-              onLinkClick();
-            }}
+            variant={"h6"}
+            onClick={handleClick}
             sx={{ cursor: "pointer" }}
           >
-            {eachObj.name}
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography
-            variant="caption"
-            textTransform="uppercase"
-            fontWeight="800"
-          >
-            {eachObj.type}
+            <b>{index + 1}. </b> {eachObj.name}
           </Typography>
         </Stack>
       </Stack>
       <Stack flexDirection="column">
-        <DeleteIcon
-          sx={{ color: "black", cursor: "pointer" }}
+        <Typography
+          variant={"body1"}
+          sx={{ color: "red", cursor: "pointer", paddingLeft: "10px" }}
           onClick={() => context.actions.deleteFromList(eachObj.id)}
-        />
+        >
+          Remove
+        </Typography>
       </Stack>
     </Stack>
   );
 };
 
-ListItem.propTypes = {
+FavoriteItem.propTypes = {
   eachObj: PropTypes.object,
   onLinkClick: PropTypes.func,
 };
 
-export default ListItem;
+export default FavoriteItem;

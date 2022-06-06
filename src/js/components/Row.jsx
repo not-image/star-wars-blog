@@ -20,17 +20,17 @@ const Row = ({ list, type }) => {
             {type}
           </Typography>
         </Stack>
-        <Stack>{type === "planets" && <SearchBar />}</Stack>
+        <Stack>
+          <SearchBar type={type} />
+        </Stack>
       </Stack>
       <Stack
         sx={{ overflowX: "scroll", paddingBottom: "20px;" }}
         flexDirection="row"
         flexWrap="nowrap"
       >
-        {list.map((each) => {
-          return (
-            <ItemCard key={each.properties.name} item={each} type={type} />
-          );
+        {list.map((each, id) => {
+          return <ItemCard key={id} item={each} type={type} />;
         })}
       </Stack>
     </Stack>

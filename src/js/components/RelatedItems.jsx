@@ -4,14 +4,14 @@ import PropTypes from "prop-types";
 import ItemCard from "./ItemCard.jsx";
 
 const RelatedItems = ({ store, currentItem, currentType }) => {
-  let newType = "";
-  if (currentType === "characters") {
-    newType = "people";
-  } else {
-    newType = currentType;
-  }
+  // let newType = "";
+  // if (currentType === "characters") {
+  //   newType = "people";
+  // } else {
+  //   newType = currentType;
+  // }
 
-  let tempCollection = store[newType];
+  let tempCollection = store[currentType];
   let currentCollection = tempCollection.filter((each) => {
     return each != currentItem;
   });
@@ -50,7 +50,7 @@ const RelatedItems = ({ store, currentItem, currentType }) => {
     >
       {createdCollection.map((each) => {
         return (
-          <ItemCard key={each.properties.name} item={each} type={currentType} />
+          <ItemCard key={each.name} item={each} type={currentType} />
         );
       })}
     </Stack>

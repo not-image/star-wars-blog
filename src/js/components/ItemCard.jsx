@@ -2,21 +2,30 @@ import * as React from "react";
 import { Stack, CardMedia, Typography, Card } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { Context } from "../context/appContext";
 import PropTypes from "prop-types";
 
 const ItemCard = ({ item, type }) => {
   let context = useContext(Context);
+  let navigate = useNavigate();
   let params = useParams();
 
   let imageSource = "";
-  if (item.uid === "1" && type === "planets") {
-    imageSource = `https://upload.wikimedia.org/wikipedia/en/6/6d/Tatooine_%28fictional_desert_planet%29.jpg`;
-  } else {
+  if (item.id != "11") {
     imageSource = `https://starwars-visualguide.com/assets/img/${type}/${item.uid}.jpg`;
+  } else {
+    imageSource = `https://upload.wikimedia.org/wikipedia/en/6/6d/Tatooine_(fictional_desert_planet).jpg`;
   }
+
+  const handleClick = () => {
+    //context.actions.setLoadingScreen(true);
+    setTimeout(() => {
+      navigate(`/${type}/${item.uid}`);
+      //context.actions.setLoadingScreen(false);
+    }, 150);
+  };
 
   return (
     <Card
@@ -28,14 +37,14 @@ const ItemCard = ({ item, type }) => {
         border: "1px solid rgb(220, 220, 220)",
       }}
     >
-      <Link to={`/${type}/${item.uid}`}>
-        <CardMedia
-          component="img"
-          height="200"
-          image={imageSource}
-          sx={{ filter: "brightness(70%)" }}
-        />
-      </Link>
+      <CardMedia
+        component="img"
+        onClick={handleClick}
+        height="200"
+        image={imageSource}
+        sx={{ filter: "brightness(70%)", cursor: "pointer" }}
+      />
+
       <Stack
         className={!params.type ? "min-height-150" : "min-height-70"}
         flexDirection="column"
@@ -43,22 +52,23 @@ const ItemCard = ({ item, type }) => {
         padding="15px 20px"
       >
         <Stack flexDirection="row" justifyContent="space-between">
-          <Link to={`/${type}/${item.uid}`}>
-            <Typography
-              className="hover-text"
-              sx={{
-                textTransform: "uppercase",
-                fontWeight: 800,
-                color: "black",
-              }}
-              variant="h7"
-              component="p"
-            >
-              {item.properties.name}
-            </Typography>
-          </Link>
+          <Typography
+            onClick={handleClick}
+            className="hover-text"
+            sx={{
+              textTransform: "uppercase",
+              fontWeight: 800,
+              color: "black",
+              cursor: "pointer",
+            }}
+            variant="h7"
+            component="p"
+          >
+            {item.name}
+          </Typography>
+
           {!context.store.favorites.find(
-            (eachObj) => eachObj.id === item._id
+            (eachObj) => eachObj.id === item.id
           ) ? (
             <FavoriteBorderIcon
               onClick={() => context.actions.toggleFavorites(item, type)}
@@ -78,22 +88,16 @@ const ItemCard = ({ item, type }) => {
               variant="body1"
               component="div"
             >
-              {item.properties.height && (
+              {item.height && (
                 <div>
                   <b>Height: </b>
-                  {item.properties.height}
+                  {item.height}
                 </div>
               )}
-              {item.properties.population && (
+              {item.population && (
                 <div>
                   <b>Population: </b>
-                  {item.properties.population}
-                </div>
-              )}
-              {item.properties.passengers && (
-                <div>
-                  <b>Passengers: </b>
-                  {item.properties.passengers}
+                  {item.population}
                 </div>
               )}
             </Typography>
@@ -102,22 +106,16 @@ const ItemCard = ({ item, type }) => {
               variant="body1"
               component="div"
             >
-              {item.properties.gender && (
+              {item.gender && (
                 <div>
                   <b>Gender: </b>
-                  {item.properties.gender}
+                  {item.gender}
                 </div>
               )}
-              {item.properties.terrain && (
+              {item.terrain && (
                 <div>
                   <b>Terrain: </b>
-                  {item.properties.terrain}
-                </div>
-              )}
-              {item.properties.manufacturer && (
-                <div>
-                  <b>Manufacturer: </b>
-                  {item.properties.manufacturer}
+                  {item.terrain}
                 </div>
               )}
             </Typography>

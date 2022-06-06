@@ -4,7 +4,7 @@ import { Context } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { Stack, Typography, TextField } from "@mui/material";
 
-const SearchBar = () => {
+const SearchBar = ({ type }) => {
   const [searchValue, setSearchValue] = useState("");
 
   let navigate = useNavigate();
@@ -15,7 +15,7 @@ const SearchBar = () => {
   };
 
   return (
-    <Stack sx={{ position: "relative", marginTop: "-20px", width: "211px" }}>
+    <Stack sx={{ position: "relative", marginTop: "-20px", width: "250px" }}>
       <TextField
         id="outlined-basic"
         value={searchValue}
@@ -25,13 +25,11 @@ const SearchBar = () => {
       />
       {searchValue != "" && (
         <div className="search-list">
-          {context.store.planets
+          {context.store[type]
             .filter((eachObj) =>
               searchValue === ""
                 ? eachObj
-                : eachObj.properties.name
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase())
+                : eachObj.name.toLowerCase().includes(searchValue.toLowerCase())
                 ? eachObj
                 : ""
             )
@@ -39,18 +37,25 @@ const SearchBar = () => {
               return (
                 <Typography
                   variant="h7"
-                  key={eachObj.properties.name}
+                  key={eachObj.name}
                   component="div"
-                  onClick={() => navigate(`/planets/${eachObj.uid}`)}
+                  onClick={() => {
+                    //context.actions.setLoadingScreen(true);
+                    setTimeout(() => {
+                      navigate(`/${type}/${eachObj.uid}`);
+                      //context.actions.setLoadingScreen(false);
+                    }, 150);
+                  }}
                   sx={{
+                    fontWeight: 600,
                     cursor: "pointer",
-                    padding: "5px 10px",
+                    padding: "8px 10px",
                     ":hover": {
-                      backgroundColor: "lightgray",
+                      backgroundColor: "#f2f2f2",
                     },
                   }}
                 >
-                  {eachObj.properties.name}
+                  {eachObj.name}
                 </Typography>
               );
             })}
