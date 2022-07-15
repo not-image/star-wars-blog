@@ -53,7 +53,7 @@ const NavBar = () => {
     setTimeout(() => {
       navigate("/");
       //context.actions.setLoadingScreen(false);
-    }, 150);
+    }, 0);
   };
 
   return (

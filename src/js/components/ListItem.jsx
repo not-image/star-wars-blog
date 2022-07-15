@@ -14,7 +14,7 @@ const ListItem = ({ eachObj, onLinkClick }) => {
     setTimeout(() => {
       navigate(`/${eachObj.type}/${eachObj.uid}`);
       //context.actions.setLoadingScreen(false);
-    }, 150);
+    }, 0);
   };
 
   return (

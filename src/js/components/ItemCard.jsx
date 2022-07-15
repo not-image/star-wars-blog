@@ -24,7 +24,7 @@ const ItemCard = ({ item, type }) => {
     setTimeout(() => {
       navigate(`/${type}/${item.uid}`);
       //context.actions.setLoadingScreen(false);
-    }, 150);
+    }, 0);
   };
 
   return (

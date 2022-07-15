@@ -1,8 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      //BASE_URL: "https://www.swapi.tech/api",
-      BASE_URL: "http://127.0.0.1:8000",
+      BASE_URL: "https://starwars-hm-api.herokuapp.com",
       endPoints: ["characters", "planets"],
       characters: JSON.parse(localStorage.getItem("characters")) || [],
       planets: JSON.parse(localStorage.getItem("planets")) || [],
